@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import br.com.pitang.selecao_java.entities.Car;
 import br.com.pitang.selecao_java.entities.User;
 import br.com.pitang.selecao_java.repositories.CarRepository;
 import br.com.pitang.selecao_java.services.UserService;
+import br.com.pitang.selecao_java.util.JwtUtil;
 import br.com.pitang.selecao_java.vo.ErrorMessageVO;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -40,11 +42,15 @@ public class CarController {
 	@Autowired
 	private CarRepository carRepository;
 	
+	@Autowired
+    private JwtUtil jwtUtil;
+	
 	private int userId = 1;
 
 	@RequestMapping(method = { RequestMethod.POST })
-	public Car createCar(@RequestBody Car car) {
-		User user = userService.findById(userId).get();
+	public Car createCar(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Car car) {
+		User user = this.getUserFromToken(authorizationHeader);
+
 		car.setUser(user);
 		carRepository.save(car);
 		System.out.println(user);
@@ -53,8 +59,10 @@ public class CarController {
 	}
 	
 	@RequestMapping(method = {RequestMethod.GET})
-	public Optional<Iterable<Car>> list() {
-		Optional<Iterable<Car>> list = carRepository.findByUserId(userId);
+	public Optional<Iterable<Car>> list(@RequestHeader("Authorization") String authorizationHeader) {
+		User user = this.getUserFromToken(authorizationHeader);
+		
+		Optional<Iterable<Car>> list = carRepository.findByUserId(user.getId());
 		return list;
 	}
 
@@ -114,5 +122,12 @@ public class CarController {
 		ErrorMessageVO vo = new ErrorMessageVO("License plate already exists",3);
 		ex.printStackTrace();
 		return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
+	}
+	
+	private User getUserFromToken(String authorizationHeader) {
+		String token = authorizationHeader.substring(7);
+		String username = jwtUtil.extractUsername(token);
+		User user = userService.findByLogin(username).get();
+		return user;
 	}
 }

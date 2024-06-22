@@ -3,12 +3,14 @@ package br.com.pitang.selecao_java.entities;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -37,9 +39,12 @@ public class User {
 	@NotNull
 	private String password;
 	private String phone;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles;
 
 	@OneToMany(mappedBy = "user", cascade = {  CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonBackReference
+	//@JsonBackReference
 	private List<Car> cars;
 
 	public User() {
@@ -127,6 +132,16 @@ public class User {
 
 	public void setBirthday(LocalDate birthday) {
 		this.birthday = birthday;
+	}
+	
+	
+
+	public Set<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<String> roles) {
+		this.roles = roles;
 	}
 
 	@Override

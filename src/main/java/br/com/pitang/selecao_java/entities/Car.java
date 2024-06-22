@@ -30,7 +30,7 @@ public class Car {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	@JsonManagedReference
+	//@JsonManagedReference
 	private User user;
 
 	public Car() {
@@ -88,11 +88,11 @@ public class Car {
 		this.user = user;
 	}
 	
-	
+	/*
 	public User getUser() {
 		return user;
 	}
-
+*/
 	@Override
 	public String toString() {
 		return "Car [id=" + id + ", year=" + year + ", licensePlate=" + licensePlate + ", model=" + model + ", color="
