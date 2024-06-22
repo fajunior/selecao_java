@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,17 +55,6 @@ public class UserService implements UserDetailsService {
 		return userRepository.findAll();
 	}
 
-	/*
-	 * public Optional<User> findById(int id) { Optional<User> optional =
-	 * userRepository.findById(id);
-	 * 
-	 * if (optional.isPresent()) {
-	 * 
-	 * Optional<Iterable<Car>> cars = carRepository.findByUserId(id); if
-	 * (cars.isPresent()) { optional.get().setCars((List<Car>)cars.get()); } }
-	 * 
-	 * return optional; }
-	 */
 	@Transactional
 	public Optional<User> findById(int id) {
 		Optional<User> optional = userRepository.findById(id);
