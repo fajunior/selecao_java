@@ -47,7 +47,8 @@ public class UserController {
 	
 	@GetMapping(path = "/{id}")
 	public Optional<User> findById(@PathVariable int id) {
-		return userService.findById(id);
+		Optional<User> optional = userService.findById(id);
+		return optional;
 	}
 	
 	@DeleteMapping(path = "/{id}")

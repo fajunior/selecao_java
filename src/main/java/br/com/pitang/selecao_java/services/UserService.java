@@ -13,6 +13,7 @@ import br.com.pitang.selecao_java.exceptions.FieldValueExistisException;
 import br.com.pitang.selecao_java.exceptions.NotNullableAttributeException;
 import br.com.pitang.selecao_java.repositories.CarRepository;
 import br.com.pitang.selecao_java.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 
 
 
@@ -44,9 +45,25 @@ public class UserService {
 	public Iterable<User> list() {
 		return userRepository.findAll();
 	}
-
+/*
 	public Optional<User> findById(int id) {
-		return userRepository.findById(id);
+		Optional<User> optional = userRepository.findById(id);
+		
+		if (optional.isPresent()) {
+			
+			Optional<Iterable<Car>> cars = carRepository.findByUserId(id);
+			if (cars.isPresent()) {
+				optional.get().setCars((List<Car>)cars.get());
+			}
+		}
+		
+		return optional;
+	}
+	*/
+	@Transactional
+	public Optional<User> findById(int id) {
+		Optional<User> optional = userRepository.findById(id);
+		return optional;
 	}
 	
 	public Optional<User> findByLogin(String login) {

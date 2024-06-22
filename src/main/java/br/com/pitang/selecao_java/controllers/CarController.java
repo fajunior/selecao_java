@@ -47,17 +47,6 @@ public class CarController {
 		User user = userService.findById(userId).get();
 		car.setUser(user);
 		carRepository.save(car);
-/*		try {
-		} catch  (ConstraintViolationException e){
-			e.printStackTrace();
-			e.getConstraintViolations().forEach({
-				
-			});
-			
-			ErrorMessageVO vo = new ErrorMessageVO(e.getMessage(), e.getCodeError());
-			return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
-			e.printStackTrace();
-		}*/
 		System.out.println(user);
 		System.out.println(car);
 		return car;
@@ -65,12 +54,14 @@ public class CarController {
 	
 	@RequestMapping(method = {RequestMethod.GET})
 	public Optional<Iterable<Car>> list() {
-		return carRepository.findByUserId(userId);
+		Optional<Iterable<Car>> list = carRepository.findByUserId(userId);
+		return list;
 	}
 
 	@GetMapping(path = "/{id}")
 	public Optional<Car> findById(@PathVariable int id) {
-		return carRepository.findByIdAndUserId(id, userId);
+		Optional<Car> car = carRepository.findByIdAndUserId(id, userId);
+		return car;
 	}
 
 	@DeleteMapping(path = "/{id}")
@@ -79,9 +70,9 @@ public class CarController {
 	}
 
 	@PutMapping(path = "/{id}")
-	public Car updateCar(@PathVariable int id, Car car) {
+	public Car updateCar(@PathVariable int id,@RequestBody  Car car) {
 		if (carRepository.existsById(id)) {
-
+			
 			carRepository.save(car);
 		}
 		return car;

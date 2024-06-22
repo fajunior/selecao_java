@@ -1,5 +1,7 @@
 package br.com.pitang.selecao_java.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,6 +30,7 @@ public class Car {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonManagedReference
 	private User user;
 
 	public Car() {
@@ -83,6 +86,11 @@ public class Car {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	
+	public User getUser() {
+		return user;
 	}
 
 	@Override
