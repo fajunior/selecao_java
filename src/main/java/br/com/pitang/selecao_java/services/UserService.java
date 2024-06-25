@@ -1,5 +1,6 @@
 package br.com.pitang.selecao_java.services;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -86,7 +87,19 @@ public class UserService implements UserDetailsService {
 	public User updateUser(int id, User user) {
 		if (userRepository.existsById(id)) {
 			User savedUser = userRepository.findById(id).get();
-			user.setCars(savedUser.getCars());
+			String encodedPassword = this.passwordEncoder().encode(user.getPassword());
+			user.setPassword(encodedPassword);
+			
+			//user.setCars(savedUser.getCars());
+			
+			if (user.getCars()== null) {
+				user.setCars(new ArrayList<Car>());
+			} else {
+				user.getCars().forEach((car) -> {
+					car.setUser(savedUser);
+					carRepository.save(car);
+				});
+			}
 			userRepository.save(user);
 		}
 		return user;

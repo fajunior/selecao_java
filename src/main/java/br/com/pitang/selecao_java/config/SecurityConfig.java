@@ -66,7 +66,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeRequests()
-                .requestMatchers("/authenticate", "/api/users").permitAll() // Permitir acesso público ao endpoint de autenticação
+                .requestMatchers("/authenticate", "/api/users", "/api/users/*").permitAll() // Permitir acesso público ao endpoint de autenticação
                 .anyRequest().authenticated()
             .and()
             .sessionManagement()
