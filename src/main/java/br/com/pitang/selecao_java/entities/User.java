@@ -2,11 +2,12 @@ package br.com.pitang.selecao_java.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -43,12 +44,13 @@ public class User {
 	@ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles;
 
-	@OneToMany(mappedBy = "user", cascade = {  CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.LAZY)
-	//@JsonBackReference
-	private List<Car> cars;
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Car> cars;
 
 	public User() {
 		super();
+		 this.cars = new ArrayList<>();
 	}
 
 	public User(@NotNull String firstName, @NotNull String lastName, @NotNull String email,
@@ -143,6 +145,16 @@ public class User {
 	public void setRoles(Set<String> roles) {
 		this.roles = roles;
 	}
+	
+	public void addCar(Car car) {
+        cars.add(car);
+        car.setUser(this); // Set the owner of the relationship
+    }
+
+    public void removeCar(Car car) {
+        cars.remove(car);
+        car.setUser(null); // Remove the owner of the relationship
+    }
 
 	@Override
 	public String toString() {

@@ -1,6 +1,7 @@
 package br.com.pitang.selecao_java.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,9 +30,9 @@ public class Car {
 	private String color;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	//@JsonManagedReference
-	private User user;
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 
 	public Car() {
 	}
@@ -85,14 +86,17 @@ public class Car {
 	}
 
 	public void setUser(User user) {
-		this.user = user;
-	}
+        this.user = user;
+        if (user != null) {
+            user.getCars().add(this);
+        }
+    }
 	
-	/*
+	
 	public User getUser() {
 		return user;
 	}
-*/
+
 	@Override
 	public String toString() {
 		return "Car [id=" + id + ", year=" + year + ", licensePlate=" + licensePlate + ", model=" + model + ", color="

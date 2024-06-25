@@ -44,8 +44,6 @@ public class CarController {
 	
 	@Autowired
     private JwtUtil jwtUtil;
-	
-	private int userId = 1;
 
 	@RequestMapping(method = { RequestMethod.POST })
 	public Car createCar(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Car car) {
@@ -67,8 +65,9 @@ public class CarController {
 	}
 
 	@GetMapping(path = "/{id}")
-	public Optional<Car> findById(@PathVariable int id) {
-		Optional<Car> car = carRepository.findByIdAndUserId(id, userId);
+	public Optional<Car> findById(@RequestHeader("Authorization") String authorizationHeader, @PathVariable int id) {
+		User user = this.getUserFromToken(authorizationHeader);
+		Optional<Car> car = carRepository.findByIdAndUserId(id, user.getId());
 		return car;
 	}
 
@@ -79,11 +78,19 @@ public class CarController {
 
 	@PutMapping(path = "/{id}")
 	public Car updateCar(@PathVariable int id,@RequestBody  Car car) {
-		if (carRepository.existsById(id)) {
-			
-			carRepository.save(car);
-		}
-		return car;
+
+		Car existingCar = carRepository.findById(car.getId())
+                .orElseThrow(() -> new RuntimeException("Carro não encontrado"));
+
+		// Atualizar propriedades do carro existente com as informações atualizadas
+		existingCar.setYear(car.getYear());
+		existingCar.setLicensePlate(car.getLicensePlate());
+		existingCar.setModel(car.getModel());
+		existingCar.setColor(car.getColor());
+		//existingCar.setUser(car.getUser());
+		
+		// Persistir a entidade atualizada (reatach se necessário)
+		return carRepository.save(existingCar);
 	}
 	
 	@ExceptionHandler(ConstraintViolationException.class)

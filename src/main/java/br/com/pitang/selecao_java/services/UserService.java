@@ -85,13 +85,30 @@ public class UserService implements UserDetailsService {
 	}
 
 	public User updateUser(int id, User user) {
+		User existingUser = userRepository.findById(id).get();
 		if (userRepository.existsById(id)) {
-			User savedUser = userRepository.findById(id).get();
+			
+			
+			existingUser.setFirstName(user.getFirstName());
+			existingUser.setLastName(user.getLastName());
+			existingUser.setEmail(user.getEmail());
+			existingUser.setLogin(user.getLogin());
+			
 			String encodedPassword = this.passwordEncoder().encode(user.getPassword());
-			user.setPassword(encodedPassword);
+			existingUser.setPassword(encodedPassword);
+			
+			existingUser.setPhone(user.getPhone());
+			if (existingUser.getCars() == null) {
+				existingUser.setCars(new ArrayList<>()); 
+				existingUser.getCars().addAll(user.getCars());
+			}
+			//existingUser.setCars(user.getCars());
+		}
+		return userRepository.save(existingUser);
+			
 			
 			//user.setCars(savedUser.getCars());
-			
+			/*
 			if (user.getCars()== null) {
 				user.setCars(new ArrayList<Car>());
 			} else {
@@ -100,9 +117,9 @@ public class UserService implements UserDetailsService {
 					carRepository.save(car);
 				});
 			}
-			userRepository.save(user);
+			userRepository.save(existingUser);
 		}
-		return user;
+		return user;*/
 	}
 
 	private void validateUserData(User user) {
