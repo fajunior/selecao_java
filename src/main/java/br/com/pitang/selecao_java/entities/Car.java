@@ -19,6 +19,7 @@ public class Car {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	@NotNull
+	@Column(name = "car_year")
 	private int year;
 	@NotNull
 	@NotBlank
